@@ -1,7 +1,21 @@
 <html>
 <head>
+<script>
+var video = document.querySelector('video');
+var constraints = window.constraints = {
+  audio: false,
+  video: true
+};
+navigator.mediaDevices.getUserMedia(constraints).then(mediaStream => {
+	const recorder = new MediaRecorder(stream);
+	recorder.ondataavailable = event => {
+		document.getElementById("video-playback").srcObject = event.data;
+	};
+	recorder.start(5000);
+});
+</script>
 </head>
 <body>
-Available soon.
+<video id="video-playback" stlye="width: 100%"></video>
 </body>
 </html>
