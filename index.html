@@ -6,14 +6,16 @@ var constraints = window.constraints = {
   audio: false,
   video: true
 };
-navigator.mediaDevices.getUserMedia(constraints).then(function(mediaStream) {
-	document.getElementById("video-playback").srcObject = mediaStream;
-	const recorder = new MediaRecorder(mediaStream);
-	recorder.ondataavailable = function(event) {
-		document.getElementById("video-playback").srcObject = event.data;
-	};
-	recorder.start(5000);
-});
+window.onload = function() {
+	navigator.mediaDevices.getUserMedia(constraints).then(function(mediaStream) {
+		document.getElementById("video-rt").srcObject = mediaStream;
+		const recorder = new MediaRecorder(mediaStream);
+		recorder.ondataavailable = function(event) {
+			document.getElementById("video-playback").srcObject = event.data;
+		};
+		recorder.start(5000);
+	});
+}
 </script>
 </head>
 <body>
