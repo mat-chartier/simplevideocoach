@@ -6,9 +6,9 @@ var constraints = window.constraints = {
   audio: false,
   video: true
 };
-navigator.mediaDevices.getUserMedia(constraints).then(mediaStream => {
+navigator.mediaDevices.getUserMedia(constraints).then(function(mediaStream) {
 	const recorder = new MediaRecorder(stream);
-	recorder.ondataavailable = event => {
+	recorder.ondataavailable = function(event) {
 		document.getElementById("video-playback").srcObject = event.data;
 	};
 	recorder.start(5000);
