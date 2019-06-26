@@ -1,0 +1,104 @@
+<html>
+	<head>
+		<script>
+			var recorder, videoElem;
+			var continueRecording = true;
+			function startRecording() {
+				continueRecording = true;
+				recorder.start();
+				window.setTimeout(function(){
+							recorder.stop();
+							if (continueRecording) {
+								startRecording();
+							}
+						}, getDelay() * 1000);
+			}
+			function stopRecording() {
+				continueRecording = false;
+				videoElem.pause();
+				videoElem.src = "";
+			}
+
+			function increaseDelay() {
+				var currentDelay = getDelay();
+				setDelay(currentDelay + 1);
+			}
+
+			function decreaseDelay() {
+				var currentDelay = getDelay();
+				if (currentDelay > 0) {
+					setDelay(currentDelay - 1);
+				}
+			}
+
+			function getDelay() {
+				return parseInt(document.getElementById("delay-value").textContent);
+			}
+
+			function setDelay(delay) {
+				document.getElementById("delay-value").textContent = delay;
+			}
+
+			function initRecorder() {
+				var constraints = window.constraints = {
+						  audio: false,
+						  video: true
+				};
+				navigator.mediaDevices.getUserMedia(constraints).then(function(liveStream) {
+					recorder = new MediaRecorder(liveStream);
+					recorder.ondataavailable = function(event) {
+						if (continueRecording) {
+							videoElem.src = URL.createObjectURL(event.data);
+							videoElem.play();
+						}
+					};
+				});
+			}
+
+			window.onload = function() {
+				document.getElementById("start-btn").addEventListener('click', startRecording);
+				document.getElementById("stop-btn").addEventListener('click', stopRecording);
+				document.getElementById("increase-btn").addEventListener('click', increaseDelay);
+				document.getElementById("decrease-btn").addEventListener('click', decreaseDelay);
+				videoElem = document.querySelector('video');
+				// Request access to the camera
+				initRecorder();
+			}
+		</script>
+		<style type="text/css">
+			video {
+				width: 100%;
+			}
+			.container {
+				min-height: 80vh;
+				display: flex;
+				flex-direction: column;
+			}
+			.video-container {
+				flex-grow: 1;
+			}
+			.controls-container {
+				font-size: 5em;
+			}
+			button {
+				margin: 0 15px;
+				font-size: inherit;
+			}
+			.delay-control {
+				padding: 0 10px;
+			}
+		</style>
+	</head>
+	<div class="container">
+		<div class="video-container">
+			<video></video>
+		</div>
+		<div class="controls-container">
+			<button id="increase-btn" class="delay-control">+</button>
+			<span id="delay-value">10</span>s		
+			<button id="decrease-btn" class="delay-control">-</button>		
+			<button id="start-btn">Start</button>
+			<button id="stop-btn">Stop</button>
+		</div>
+	</div>
+</html>
