@@ -21,7 +21,7 @@ html, body {
 }
 
 video {
-	height: inherit;
+	width: inherit;
 }
 
 .controls-container {
