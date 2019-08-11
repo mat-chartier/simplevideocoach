@@ -1,7 +1,7 @@
 var recorder, videoElem;
-var continueRecording = true;
-
+var continueRecording = false;
 var displayCountDown = true;
+
 function startRecording() {
 	continueRecording = true;
 	if (displayCountDown) {
@@ -25,7 +25,8 @@ function startCountDown() {
 	countDown = window.setInterval(function() {
 		seconds--;
 		if (seconds <= 0) {
-			document.getElementById("count-down-container").classList.add("hidden");
+			document.getElementById("count-down-container").classList
+					.add("hidden");
 			window.clearInterval(countDown);
 		} else {
 			showCountDown(seconds)
@@ -66,22 +67,6 @@ function setDelay(delay) {
 	document.getElementById("delay-value").textContent = delay;
 }
 
-function initRecorder() {
-	var constraints = window.constraints = {
-		audio : false,
-		video : true
-	};
-	navigator.mediaDevices.getUserMedia(constraints).then(function(liveStream) {
-		recorder = new MediaRecorder(liveStream);
-		recorder.ondataavailable = function(event) {
-			if (continueRecording) {
-				videoElem.src = URL.createObjectURL(event.data);
-				videoElem.play();
-			}
-		};
-	});
-}
-
 document.addEventListener("DOMContentLoaded", function() {
 	document.getElementById("start-btn").addEventListener('click',
 			startRecording);
@@ -92,6 +77,19 @@ document.addEventListener("DOMContentLoaded", function() {
 	document.getElementById("decrease-btn").addEventListener('click',
 			decreaseDelay);
 	videoElem = document.querySelector('video');
-	// Request access to the camera
-	initRecorder();
+	var constraints = {
+			audio : false,
+			video : true
+	};
+	navigator.mediaDevices.getUserMedia(constraints).then(function(liveStream) {
+		recorder = new MediaRecorder(liveStream);
+		document.getElementById("start-btn").classList.remove("hidden");
+		document.getElementById("stop-btn").classList.remove("hidden");
+		recorder.ondataavailable = function(event) {
+			if (continueRecording) {
+				videoElem.src = URL.createObjectURL(event.data);
+				videoElem.play();
+			}
+		};
+	});
 });
